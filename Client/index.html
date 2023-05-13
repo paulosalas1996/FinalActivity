@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test</title>
+    <style>
+        #recordsTable {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        #recordsTable th,
+        #recordsTable td {
+            text-align: left;
+            padding: 8px;
+        }
+
+        #recordsTable th {
+            background-color: #eee;
+        }
+
+        #recordsTable tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+
+<body>
+    <input type="text" id="username" placeholder="Username">
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="getRecord()">Get Record</button>
+    <button onclick="addRecord()">Add Record</button>
+    <button onclick="updateRecord()">Update Record</button>
+    <button onclick="deleteRecord()">Delete Record</button>
+
+    <table id="recordsTable" style="display:none;">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Password</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+    <script>
+        $(document).on("click", "#recordsTable tbody tr", function () {
+            var id = $(this).find("td:eq(0)").text();
+            var username = $(this).find("td:eq(1)").text();
+            var email = $(this).find("td:eq(2)").text();
+            var password = $(this).find("td:eq(3)").text();
+
+            $("#id").val(id);
+            $("#username").val(username);
+            $("#email").val(email);
+            $("#password").val(password);
+        });
+
+        function getRecord() {
+            $.ajax({
+                url: "http://finalactivity.test/personel/",
+                method: "GET",
+                success: function (response) {
+                    console.log(response);
+
+                    var recordsTable = $("#recordsTable");
+                    var recordsBody = recordsTable.find("tbody");
+                    recordsBody.empty();
+
+                    $.each(response, function (index, record) {
+                        var row = $("<tr/>");
+                        $("<td/>").text(record.id).appendTo(row);
+                        $("<td/>").text(record.username).appendTo(row);
+                        $("<td/>").text(record.email).appendTo(row);
+                        $("<td/>").text(record.password).appendTo(row);
+
+                        // Add a click event listener to each row in the table
+                        row.click(function () {
+                            // Get the ID of the record associated with this row
+                            var id = record.id;
+
+                            // Call a function to handle the row click event
+                            handleRowClick(id);
+                        });
+
+                        recordsBody.append(row);
+                    });
+
+                    recordsTable.show();
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error:", error);
+                }
+            });
+        }
+
+        // Function to handle row click events
+        function handleRowClick(id) {
+            // Log the ID of the clicked record to the console
+            console.log("Clicked record with ID:", id);
+
+            // Do something else with the ID, such as displaying a modal or navigating to a new page
+            // ...
+        }
+
+
+        function addRecord() {
+            var id = $("#id").val();
+            var username = $("#username").val();
+            var email = $("#email").val();
+            var password = $("#password").val();
+            $.ajax({
+                url: "http://finalactivity.test/personel/",
+                method: "POST",
+                data: {
+                    "id": id,
+                    "username": username,
+                    "email": email,
+                    "password": password
+                },
+                success: function (response) {
+                    console.log(response);
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error:", error);
+                }
+            });
+        }
+
+        function updateRecord() {
+            var id = $("#id").val();
+            var newUsername = $("#username").val();
+            var newEmail = $("#email").val();
+            var newPassword = $("#password").val();
+
+            $.ajax({
+                url: "http://finalactivity.test/personel/index.php?id=1",
+                method: "PUT",
+                data: {
+                    "id": id,
+                    "username": newUsername,
+                    "email": newEmail,
+                    "password": newPassword
+                },
+                success: function (response) {
+                    console.log(response);
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error:", error);
+                }
+            });
+        }
+
+        function deleteRecord() {
+            var id = $("#id").val();
+            var username = $("#username").val();
+            var email = $("#email").val();
+            var password = $("#password").val();
+
+            $.ajax({
+                url: "http://finalactivity.test/personel/index.php?id=1",
+                method: "DELETE",
+                success: function (response) {
+                    console.log(response);
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error:", error);
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>
